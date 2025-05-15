@@ -68,6 +68,37 @@ $config = new PDOConfig(
 $pdo = PDOFactory::create($config);
 ```
 
+### Creating Configuration from Environment Variables
+
+You can create a `PDOConfig` instance directly from environment variables using the static `fromEnv()` method.
+
+Example:
+
+```php
+$config = PDOConfig::fromEnv();
+$pdo = PDOFactory::create($config);
+```
+
+This expects the following environment variables to be set:
+
+```
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=my_database
+DB_USER=my_user
+DB_PASS=my_password
+DB_CHARSET=utf8
+```
+
+You can load these variables from a `.env` file using [vlucas/phpdotenv](https://github.com/vlucas/phpdotenv):
+
+```php
+use Dotenv\Dotenv;
+
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+```
+
 ### Error Handling
 
 The `create()` method throws a `PDOException` if the connection fails due to incorrect configuration or other database errors.  

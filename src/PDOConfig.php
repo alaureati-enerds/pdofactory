@@ -76,4 +76,30 @@ class PDOConfig
     {
         return "mysql:host={$this->dbHost};port={$this->dbPort};dbname={$this->dbName};charset={$this->dbCharset}";
     }
+
+    /**
+     * Creates a new PDOConfig instance from environment variables.
+     *
+     * Expected environment variables:
+     *  - DB_HOST
+     *  - DB_PORT
+     *  - DB_NAME
+     *  - DB_USER
+     *  - DB_PASS
+     *  - DB_CHARSET (optional, default: 'utf8')
+     *
+     * @return self
+     */
+    public static function fromEnv(): self
+    {
+        return new self(
+            dbHost: $_ENV['DB_HOST'] ?? 'localhost',
+            dbPort: (int) ($_ENV['DB_PORT'] ?? 3306),
+            dbName: $_ENV['DB_NAME'] ?? '',
+            dbUser: $_ENV['DB_USER'] ?? '',
+            dbPass: $_ENV['DB_PASS'] ?? '',
+            dbCharset: $_ENV['DB_CHARSET'] ?? 'utf8',
+            options: null
+        );
+    }
 }

@@ -83,4 +83,23 @@ class PDOConfigTest extends TestCase
             dbPass: 'pass'
         );
     }
+
+    public function testFromEnvCreatesConfigCorrectly()
+    {
+        $_ENV['DB_HOST'] = 'localhost';
+        $_ENV['DB_PORT'] = '3306';
+        $_ENV['DB_NAME'] = 'env_database';
+        $_ENV['DB_USER'] = 'env_user';
+        $_ENV['DB_PASS'] = 'env_pass';
+        $_ENV['DB_CHARSET'] = 'utf8mb4';
+
+        $config = PDOConfig::fromEnv();
+
+        $this->assertEquals('localhost', $config->dbHost);
+        $this->assertEquals(3306, $config->dbPort);
+        $this->assertEquals('env_database', $config->dbName);
+        $this->assertEquals('env_user', $config->dbUser);
+        $this->assertEquals('env_pass', $config->dbPass);
+        $this->assertEquals('utf8mb4', $config->dbCharset);
+    }
 }
