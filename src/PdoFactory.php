@@ -32,4 +32,20 @@ class PDOFactory
         $dsn = $config->getDsn();
         return new PDO($dsn, $config->dbUser, $config->dbPass, $config->options);
     }
+
+    /**
+     * Tests whether a database connection can be successfully established.
+     *
+     * @param PDOConfig $config The configuration to test.
+     * @return bool True if the connection succeeds, false otherwise.
+     */
+    public static function testConnection(PDOConfig $config): bool
+    {
+        try {
+            new PDO($config->getDsn(), $config->dbUser, $config->dbPass, $config->options);
+            return true;
+        } catch (PDOException) {
+            return false;
+        }
+    }
 }
