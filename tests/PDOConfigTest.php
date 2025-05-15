@@ -102,4 +102,29 @@ class PDOConfigTest extends TestCase
         $this->assertEquals('env_pass', $config->dbPass);
         $this->assertEquals('utf8mb4', $config->dbCharset);
     }
+
+    public function testFromArrayCreatesConfigCorrectly()
+    {
+        $array = [
+            'db_host' => '127.0.0.1',
+            'db_port' => 3307,
+            'db_name' => 'array_db',
+            'db_user' => 'array_user',
+            'db_pass' => 'array_pass',
+            'db_charset' => 'latin1',
+            'options' => [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            ]
+        ];
+
+        $config = PDOConfig::fromArray($array);
+
+        $this->assertEquals('127.0.0.1', $config->dbHost);
+        $this->assertEquals(3307, $config->dbPort);
+        $this->assertEquals('array_db', $config->dbName);
+        $this->assertEquals('array_user', $config->dbUser);
+        $this->assertEquals('array_pass', $config->dbPass);
+        $this->assertEquals('latin1', $config->dbCharset);
+        $this->assertEquals(PDO::ERRMODE_EXCEPTION, $config->options[PDO::ATTR_ERRMODE]);
+    }
 }

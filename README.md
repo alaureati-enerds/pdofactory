@@ -99,6 +99,28 @@ $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 ```
 
+### Creating Configuration from an Array
+
+You can also create a `PDOConfig` instance from an associative array using the `fromArray()` method.
+
+Example:
+
+```php
+$configArray = [
+    'db_host' => 'localhost',
+    'db_port' => 3306,
+    'db_name' => 'my_database',
+    'db_user' => 'my_user',
+    'db_pass' => 'my_password',
+    'db_charset' => 'utf8',
+];
+
+$config = PDOConfig::fromArray($configArray);
+$pdo = PDOFactory::create($config);
+```
+
+This approach is useful when working with configuration files or injecting database settings at runtime.
+
 ### Error Handling
 
 The `create()` method throws a `PDOException` if the connection fails due to incorrect configuration or other database errors.  

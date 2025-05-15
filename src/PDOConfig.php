@@ -102,4 +102,32 @@ class PDOConfig
             options: null
         );
     }
+
+    /**
+     * Creates a new PDOConfig instance from an associative array.
+     *
+     * Expected array keys:
+     *  - db_host
+     *  - db_port
+     *  - db_name
+     *  - db_user
+     *  - db_pass
+     *  - db_charset (optional, default: 'utf8')
+     *  - options (optional, PDO options array)
+     *
+     * @param array $config
+     * @return self
+     */
+    public static function fromArray(array $config): self
+    {
+        return new self(
+            dbHost: $config['db_host'] ?? 'localhost',
+            dbPort: (int) ($config['db_port'] ?? 3306),
+            dbName: $config['db_name'] ?? '',
+            dbUser: $config['db_user'] ?? '',
+            dbPass: $config['db_pass'] ?? '',
+            dbCharset: $config['db_charset'] ?? 'utf8',
+            options: $config['options'] ?? null
+        );
+    }
 }
