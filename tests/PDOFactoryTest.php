@@ -48,6 +48,8 @@ class PDOFactoryTest extends TestCase
 
         $this->assertEquals(PDO::ERRMODE_EXCEPTION, $pdo->getAttribute(PDO::ATTR_ERRMODE));
         $this->assertEquals(PDO::FETCH_ASSOC, $pdo->getAttribute(PDO::ATTR_DEFAULT_FETCH_MODE));
+        // Default emulate prepares should be disabled
+        $this->assertFalse($pdo->getAttribute(PDO::ATTR_EMULATE_PREPARES));
     }
 
     public function testCustomOptionsOverrideDefaults()
@@ -70,5 +72,21 @@ class PDOFactoryTest extends TestCase
         $this->assertEquals(PDO::ERRMODE_SILENT, $pdo->getAttribute(PDO::ATTR_ERRMODE));
         $this->assertEquals(PDO::FETCH_OBJ, $pdo->getAttribute(PDO::ATTR_DEFAULT_FETCH_MODE));
         $this->assertEquals(1, $pdo->getAttribute(PDO::ATTR_EMULATE_PREPARES));
+    }
+
+    /**
+     * Tests that testConnection() returns true for a valid configuration.
+     */
+    public function testTestConnectionReturnsTrueForValidConfig()
+    {
+        $this->assertTrue(PDOFactory::testConnection($this->validConfig));
+    }
+
+    /**
+     * Tests that testConnection() returns false for an invalid configuration.
+     */
+    public function testTestConnectionReturnsFalseForInvalidConfig()
+    {
+        $this->assertFalse(PDOFactory::testConnection($this->invalidConfig));
     }
 }

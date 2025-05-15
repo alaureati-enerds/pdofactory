@@ -127,4 +127,92 @@ class PDOConfigTest extends TestCase
         $this->assertEquals('latin1', $config->dbCharset);
         $this->assertEquals(PDO::ERRMODE_EXCEPTION, $config->options[PDO::ATTR_ERRMODE]);
     }
+
+    public function testInvalidPortDefaultsToInt()
+    {
+        $_ENV['DB_PORT'] = 'notanumber';
+        $_ENV['DB_NAME'] = 'demo';
+        $_ENV['DB_USER'] = 'user';
+        $_ENV['DB_PASS'] = 'pass';
+
+        $config = PDOConfig::fromEnv();
+        $this->assertSame(3306, $config->dbPort); // fallback default
+    }
+
+    public function testMissingOptionalCharsetDefaultsToUtf8()
+    {
+        $_ENV['DB_NAME'] = 'demo';
+        $_ENV['DB_USER'] = 'user';
+        $_ENV['DB_PASS'] = 'pass';
+        unset($_ENV['DB_CHARSET']);
+
+        $config = PDOConfig::fromEnv();
+        $this->assertEquals('utf8', $config->dbCharset);
+    }
+
+    public function testFromArrayThrowsWhenMissingDbName()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        PDOConfig::fromArray([
+            'db_user' => 'admin',
+            'db_pass' => 'secret'
+        ]);
+    }
+
+    public function testFromArrayThrowsWhenMissingDbUser()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        PDOConfig::fromArray([
+            'db_name' => 'mydb',
+            'db_pass' => 'secret'
+        ]);
+    }
+
+    public function testToArrayIncludesPasswordWhenFlagTrue()
+    {
+        $config = new PDOConfig(
+            dbHost: 'localhost',
+            dbPort: 3306,
+            dbName: 'app',
+            dbUser: 'user',
+            dbPass: 'secret'
+        );
+
+        $array = $config->toArray(true);
+        $this->assertEquals('secret', $array['db_pass']);
+    }
+
+    public function testToJsonIncludesPasswordWhenFlagTrue()
+    {
+        $config = new PDOConfig(
+            dbHost: 'localhost',
+            dbPort: 3306,
+            dbName: 'app',
+            dbUser: 'user',
+            dbPass: 'secret'
+        );
+
+        $json = $config->toJson(true);
+        $this->assertStringContainsString('"db_pass": "secret"', $json);
+    }
+
+    public function testFromEnvThrowsWhenDbNameMissing()
+    {
+        $_ENV['DB_USER'] = 'user';
+        $_ENV['DB_PASS'] = 'pass';
+        unset($_ENV['DB_NAME']);
+
+        $this->expectException(\InvalidArgumentException::class);
+        PDOConfig::fromEnv();
+    }
+
+    public function testFromEnvThrowsWhenDbUserMissing()
+    {
+        $_ENV['DB_NAME'] = 'demo';
+        $_ENV['DB_PASS'] = 'pass';
+        unset($_ENV['DB_USER']);
+
+        $this->expectException(\InvalidArgumentException::class);
+        PDOConfig::fromEnv();
+    }
 }

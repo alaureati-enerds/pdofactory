@@ -94,7 +94,7 @@ class PDOConfig
     {
         return new self(
             dbHost: $_ENV['DB_HOST'] ?? 'localhost',
-            dbPort: (int) ($_ENV['DB_PORT'] ?? 3306),
+            dbPort: is_numeric($_ENV['DB_PORT'] ?? null) ? (int) $_ENV['DB_PORT'] : 3306,
             dbName: $_ENV['DB_NAME'] ?? '',
             dbUser: $_ENV['DB_USER'] ?? '',
             dbPass: $_ENV['DB_PASS'] ?? '',
@@ -129,5 +129,35 @@ class PDOConfig
             dbCharset: $config['db_charset'] ?? 'utf8',
             options: $config['options'] ?? null
         );
+    }
+
+    /**
+     * Returns the configuration as an associative array.
+     *
+     * @param bool $includeSensitive If true, includes the password; otherwise masks it.
+     * @return array
+     */
+    public function toArray(bool $includeSensitive = false): array
+    {
+        return [
+            'db_host' => $this->dbHost,
+            'db_port' => $this->dbPort,
+            'db_name' => $this->dbName,
+            'db_user' => $this->dbUser,
+            'db_pass' => $includeSensitive ? $this->dbPass : '***',
+            'db_charset' => $this->dbCharset,
+            'options' => $this->options,
+        ];
+    }
+
+    /**
+     * Returns the configuration as a JSON string.
+     *
+     * @param bool $includeSensitive If true, includes the password; otherwise masks it.
+     * @return string
+     */
+    public function toJson(bool $includeSensitive = false): string
+    {
+        return json_encode($this->toArray($includeSensitive), JSON_PRETTY_PRINT);
     }
 }
